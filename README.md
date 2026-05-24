@@ -18,6 +18,7 @@ kubectl get pods -n kafka --context=gke_wise-trainer-244916_us-central1_multiclo
 kubectl apply -f kafka-sasl-mtls-user.yaml --context=gke_wise-trainer-244916_us-central1_multicloud-gke-cluster	
 ```
 
+```
 -------------------------------------------------------------------------------------------------------------------------
 For SASL_SSL
 -------------------------------------------------------------------------------------------------------------------------	
@@ -74,3 +75,4 @@ kubectl exec -it kafka-with-kraft-kafka-with-kraft-broker-0 -n kafka --context=g
 /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka-with-kraft-kafka-bootstrap.kafka.svc.cluster.local:9093 --create --topic secure-test --command-config /tmp/sasl-client.properties
 /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka-with-kraft-kafka-bootstrap.kafka.svc.cluster.local:9094 --create --topic secure-test2 --command-config /tmp/mtls-client.properties
 /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka-with-kraft-kafka-bootstrap.kafka.svc.cluster.local:9092 --create --topic secure-test3
+```
