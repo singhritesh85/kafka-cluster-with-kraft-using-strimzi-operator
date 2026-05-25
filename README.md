@@ -32,7 +32,7 @@ bootstrap.servers=kafka-with-kraft-kafka-bootstrap.kafka.svc.cluster.local:9093
 security.protocol=SASL_SSL
 
 # Trust configuration
-ssl.truststore.location=truststore.jks
+ssl.truststore.location=/tmp/truststore.jks
 ssl.truststore.password=Dexter@123
 
 # SASL configuration
@@ -55,11 +55,11 @@ bootstrap.servers=kafka-with-kraft-kafka-bootstrap.kafka.svc.cluster.local:9094
 security.protocol=SSL
 
 # Truststore (To verify the broker)
-ssl.truststore.location=/path/to/truststore.jks
+ssl.truststore.location=/tmp/truststore.jks
 ssl.truststore.password=Dexter@123
 
 # Keystore (To authenticate the client to the broker)
-ssl.keystore.location=/path/to/keystore.jks
+ssl.keystore.location=/tmp/keystore.jks
 ssl.keystore.password=Dexter@123
 
 --------------------------------------------------------------------------------------------------------------------------
