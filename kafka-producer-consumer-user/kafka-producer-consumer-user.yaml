@@ -46,7 +46,7 @@ spec:
           type: group
           name: kafka-demo-group
           patternType: literal
-        operation: 
+        operations: 
         - Read
         host: '*'
         type: allow
