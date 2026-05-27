@@ -15,7 +15,8 @@ spec:
           type: topic
           name: kafka-demo-topic
           patternType: literal
-        operation: Write
+        operation: 
+        - Write
         host: '*'
         type: allow
         host: '*'
@@ -44,7 +45,8 @@ spec:
           type: group
           name: kafka-demo-group
           patternType: literal
-        operation: Read
+        operation: 
+        - Read
         host: '*'
         type: allow
     type: simple
