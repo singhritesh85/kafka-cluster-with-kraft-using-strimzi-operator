@@ -15,7 +15,7 @@ spec:
           type: topic
           name: kafka-demo-topic
           patternType: literal
-        operation: 
+        operations: 
         - Write
         host: '*'
         type: allow
@@ -38,7 +38,7 @@ spec:
           type: topic
           name: kafka-demo-topic
           patternType: literal
-        operation: Read
+        operations: Read
         host: '*'
         type: allow
       - resource:
