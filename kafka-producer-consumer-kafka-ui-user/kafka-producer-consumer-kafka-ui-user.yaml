@@ -15,7 +15,7 @@ spec:
           type: topic
           name: kafka-demo-topic
           patternType: literal
-        operations: 
+        operations:
         - Write
         host: '*'
         type: allow
@@ -38,7 +38,7 @@ spec:
           type: topic
           name: kafka-demo-topic
           patternType: literal
-        operations: 
+        operations:
         - Read
         host: '*'
         type: allow
@@ -46,7 +46,7 @@ spec:
           type: group
           name: kafka-demo-group
           patternType: literal
-        operations: 
+        operations:
         - Read
         host: '*'
         type: allow
@@ -62,3 +62,26 @@ metadata:
 spec:
   authentication:
     type: tls
+  authorization:
+    type: simple
+    acls:
+      # EVERYTHING on topics
+      - resource:
+          type: topic
+          name: "*"
+          patternType: literal
+        operations:
+          - All
+      # EVERYTHING on consumer groups
+      - resource:
+          type: group
+          name: "*"
+          patternType: literal
+        operations:
+          - All
+      # Cluster-wide admin operations
+      - resource:
+          type: cluster
+          name: kafka-cluster
+        operations:
+          - All
