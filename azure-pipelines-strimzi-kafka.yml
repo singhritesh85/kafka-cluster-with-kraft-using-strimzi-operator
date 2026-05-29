@@ -1,0 +1,37 @@
+trigger:
+- none
+
+pool: 
+  name: demo
+  demands:
+  - agent.name -equals demo
+
+stages:
+- stage: KafkaDeployment
+  displayName: KafkaDeployment
+  jobs:
+  - deployment: KafkaDeployment
+    displayName: KafkaDeployment
+    environment: "dev"
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - checkout: none
+          - task: CmdLine@2
+            inputs:
+              script: |
+                yes|argocd login argocd.singhritesh85.com --username admin --password $(ARGOCD_PASSWORD) --grpc-web --kube-context=gke_wise-trainer-244916_us-central1_multicloud-gke-cluster
+                argocd repo add https://github.com/singhritesh85/kafka-cluster-with-kraft-using-strimzi-operator.git --username $(GITHUB_USERNAME) --password $(GITHUB_PASSWORD) --kube-context=gke_wise-trainer-244916_us-central1_multicloud-gke-cluster
+                argocd app create kafka-with-kraft --project default --repo https://github.com/singhritesh85/kafka-cluster-with-kraft-using-strimzi-operator.git --path ./kafka-kraft --dest-namespace kafka --sync-option CreateNamespace=true --dest-server https://kubernetes.default.svc --sync-policy automated --kube-context=gke_wise-trainer-244916_us-central1_multicloud-gke-cluster --upsert
+                #argocd app sync kafka-with-kraft --kube-context=gke_wise-trainer-244916_us-central1_multicloud-gke-cluster
+                kubectl get pods -n kafka --context=gke_wise-trainer-244916_us-central1_multicloud-gke-cluster
+                kubectl get svc -n kafka --context=gke_wise-trainer-244916_us-central1_multicloud-gke-cluster
+                argocd app create kafka-topic --project default --repo https://github.com/singhritesh85/kafka-cluster-with-kraft-using-strimzi-operator.git --path ./kafka-topic --dest-namespace kafka --sync-option CreateNamespace=true --dest-server https://kubernetes.default.svc --sync-policy automated --kube-context=gke_wise-trainer-244916_us-central1_multicloud-gke-cluster --upsert
+                #argocd app sync kafka-topic --kube-context=gke_wise-trainer-244916_us-central1_multicloud-gke-cluster
+                kubectl get kafkatopics -n kafka --context=gke_wise-trainer-244916_us-central1_multicloud-gke-cluster
+                argocd app create kafka-user --project default --repo https://github.com/singhritesh85/kafka-cluster-with-kraft-using-strimzi-operator.git --path ./kafka-producer-consumer-kafka-ui-user --dest-namespace kafka --sync-option CreateNamespace=true --dest-server https://kubernetes.default.svc --sync-policy automated --kube-context=gke_wise-trainer-244916_us-central1_multicloud-gke-cluster --upsert
+                #argocd app sync kafka-user --kube-context=gke_wise-trainer-244916_us-central1_multicloud-gke-cluster
+                kubectl get kafkausers -n kafka --context=gke_wise-trainer-244916_us-central1_multicloud-gke-cluster
+
+          
