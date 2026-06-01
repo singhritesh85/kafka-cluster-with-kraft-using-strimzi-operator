@@ -1,0 +1,68 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka-ui
+  namespace: kafka
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.name: kafka-ui
+  template:
+    metadata:
+      labels:
+        app.name: kafka-ui
+    spec:
+      containers:
+      - name: kafka-ui
+        image: provectuslabs/kafka-ui:latest
+        ports:
+        - containerPort: 8080
+          name: http
+        env:
+        - name: KAFKA_CLUSTERS_0_NAME
+          value: "kafka-with-kraft"
+        - name: KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS
+          value: "kafka-with-kraft-kafka-bootstrap.kafka.svc.cluster.local:9094"
+        - name: KAFKA_CLUSTERS_0_PROPERTIES_SECURITY_PROTOCOL
+          value: "SSL"
+        - name: KAFKA_CLUSTERS_0_PROPERTIES_SSL_TRUSTSTORE_LOCATION
+          value: "/opt/kafka-ui/secrets/truststore.jks"
+        - name: KAFKA_CLUSTERS_0_PROPERTIES_SSL_TRUSTSTORE_PASSWORD
+          value: "Dexter@123"
+        - name: KAFKA_CLUSTERS_0_PROPERTIES_SSL_TRUSTSTORE_TYPE
+          value: "JKS"
+        - name: KAFKA_CLUSTERS_0_PROPERTIES_SSL_KEYSTORE_LOCATION
+          value: "/opt/kafka-ui/secrets/keystore.jks"
+        - name: KAFKA_CLUSTERS_0_PROPERTIES_SSL_KEYSTORE_PASSWORD
+          value: "Dexter@123"
+        - name: KAFKA_CLUSTERS_0_PROPERTIES_SSL_KEY_PASSWORD
+          value: "Dexter@123"
+        - name: KAFKA_CLUSTERS_0_PROPERTIES_SSL_KEYSTORE_TYPE
+          value: "JKS"
+        volumeMounts:
+        - name: tls-secrets
+          mountPath: /opt/kafka-ui/secrets
+          readOnly: true
+      volumes:
+      - name: tls-secrets
+        secret:
+          secretName: kafka-ui-tls-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka-ui-service
+  namespace: kafka
+  labels:
+    app.name: kafka-ui
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: 8080
+      protocol: TCP
+      name: http
+  selector:
+    app.name: kafka-ui
