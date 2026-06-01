@@ -30,25 +30,45 @@ spec:
         - name: KAFKA_CLUSTERS_0_PROPERTIES_SSL_TRUSTSTORE_LOCATION
           value: "/opt/kafka-ui/secrets/truststore.jks"
         - name: KAFKA_CLUSTERS_0_PROPERTIES_SSL_TRUSTSTORE_PASSWORD
-          value: "Dexter@123"
+          valueFrom:
+            secretKeyRef:
+              name: keystore-truststore-credentials
+              key: password
         - name: KAFKA_CLUSTERS_0_PROPERTIES_SSL_TRUSTSTORE_TYPE
           value: "JKS"
         - name: KAFKA_CLUSTERS_0_PROPERTIES_SSL_KEYSTORE_LOCATION
           value: "/opt/kafka-ui/secrets/keystore.jks"
         - name: KAFKA_CLUSTERS_0_PROPERTIES_SSL_KEYSTORE_PASSWORD
-          value: "Dexter@123"
+          valueFrom:
+            secretKeyRef:
+              name: keystore-truststore-credentials
+              key: password
         - name: KAFKA_CLUSTERS_0_PROPERTIES_SSL_KEY_PASSWORD
-          value: "Dexter@123"
+          valueFrom:
+            secretKeyRef:
+              name: keystore-truststore-credentials
+              key: password
         - name: KAFKA_CLUSTERS_0_PROPERTIES_SSL_KEYSTORE_TYPE
           value: "JKS"
         volumeMounts:
         - name: tls-secrets
           mountPath: /opt/kafka-ui/secrets
           readOnly: true
+        - name: tls-kafka-ui-secrets
+          mountPath: /opt/kafka-ui/truststore-keystore
+          readOnly: true
       volumes:
       - name: tls-secrets
         secret:
           secretName: kafka-ui-tls-secret
+      - name: tls-kafka-ui-secrets
+        csi:
+          driver: secrets-store.csi.k8s.io
+          readOnly: true
+          volumeAttributes:
+            secretProviderClass: azure-keyvault
+          nodePublishSecretRef:
+                  name: secrets-store-creds
 ---
 apiVersion: v1
 kind: Service
