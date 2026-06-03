@@ -1,0 +1,41 @@
+apiVersion: keda.sh/v1alpha1
+kind: TriggerAuthentication
+metadata:
+  name: kafka-trigger-auth
+  namespace: producer-consumer 
+spec:
+  secretTargetRef:
+    - parameter: ca
+      name: keda-user
+      key: ca.crt
+    - parameter: cert
+      name: keda-user
+      key: user.crt
+    - parameter: key
+      name: keda-user
+      key: user.key
+---
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: kafka-consumer-scaler
+  namespace: producer-consumer
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: kafka-consumer
+  pollingInterval: 5
+  cooldownPeriod: 30  
+  minReplicaCount: 1
+  maxReplicaCount: 5
+  triggers:
+    - type: kafka
+      metadata:
+        bootstrapServers: kafka-with-kraft-kafka-bootstrap.kafka.svc.cluster.local:9094
+        consumerGroup: kafka-demo-group
+        topic: kafka-demo-topic
+        tls: enable
+        lagThreshold: "1" ###"100"
+      authenticationRef:
+        name: kafka-trigger-auth
