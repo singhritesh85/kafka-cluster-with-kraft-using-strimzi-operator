@@ -1,0 +1,31 @@
+trigger:
+- none
+
+pool: 
+  name: demo
+  demands:
+  - agent.name -equals demo
+
+stages:
+- stage: KedaTriggerAutheticationandScaledObjectDeployment
+  displayName: KedaTriggerAutheticationandScaledObjectDeployment
+  jobs:
+  - deployment: KedaTriggerAutheticationandScaledObjectDeployment
+    displayName: KedaTriggerAutheticationandScaledObjectDeployment
+    environment: "dev"
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - checkout: none
+          - task: CmdLine@2
+            inputs:
+              script: |
+                yes|argocd login argocd.singhritesh85.com --username admin --password $(ARGOCD_PASSWORD) --grpc-web --kube-context=gke_wise-trainer-244916_us-central1_multicloud-gke-cluster
+                argocd repo add https://github.com/singhritesh85/kafka-cluster-with-kraft-using-strimzi-operator.git --username $(GITHUB_USERNAME) --password $(GITHUB_PASSWORD) --kube-context=gke_wise-trainer-244916_us-central1_multicloud-gke-cluster
+                argocd app create keda-scaled-object --project default --repo https://github.com/singhritesh85/kafka-cluster-with-kraft-using-strimzi-operator.git --path ./trigger-authentication-scaled-object --dest-namespace producer-consumer --sync-option CreateNamespace=true --dest-server https://kubernetes.default.svc --sync-policy automated --kube-context=gke_wise-trainer-244916_us-central1_multicloud-gke-cluster --upsert
+                #argocd app sync keda-scaled-object --kube-context=gke_wise-trainer-244916_us-central1_multicloud-gke-cluster
+                kubectl get triggerauthentication -n producer-consumer --context=gke_wise-trainer-244916_us-central1_multicloud-gke-cluster
+                kubectl get scaledobject -n producer-consumer --context=gke_wise-trainer-244916_us-central1_multicloud-gke-cluster
+
+          
