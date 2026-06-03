@@ -90,7 +90,7 @@ apiVersion: kafka.strimzi.io/v1
 kind: KafkaUser
 metadata:
   name: keda-user
-  namespace: kafka
+  namespace: producer-consumer
   labels:
     strimzi.io/cluster: kafka-with-kraft
 spec:
