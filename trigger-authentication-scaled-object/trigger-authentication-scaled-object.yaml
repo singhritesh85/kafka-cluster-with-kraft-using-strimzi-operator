@@ -1,21 +1,19 @@
 ---
 apiVersion: keda.sh/v1alpha1
-kind: ClusterTriggerAuthentication
+kind: TriggerAuthentication
 metadata:
-  name: kafka-trigger-auth-cluster
+  name: kafka-trigger-auth
+  namespace: producer-consumer
 spec:
   secretTargetRef:
     - parameter: ca
       name: kafka-with-kraft-cluster-ca-cert
-      namespace: kafka
       key: ca.crt
     - parameter: cert
       name: keda-user
-      namespace: producer-consumer 
       key: user.crt
     - parameter: key
       name: keda-user
-      namespace: producer-consumer
       key: user.key
 ---
 apiVersion: keda.sh/v1alpha1
@@ -42,5 +40,5 @@ spec:
         lagThreshold: "1" ###"100"
       authenticationRef:
         name: kafka-trigger-auth-cluster
-        kind: ClusterTriggerAuthentication
+        kind: TriggerAuthentication
 ...
