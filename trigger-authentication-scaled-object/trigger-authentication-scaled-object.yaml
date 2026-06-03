@@ -39,6 +39,6 @@ spec:
         tls: enable
         lagThreshold: "1" ###"100"
       authenticationRef:
-        name: kafka-trigger-auth-cluster
+        name: kafka-trigger-auth
         kind: TriggerAuthentication
 ...
