@@ -21,6 +21,14 @@ stages:
           - task: CmdLine@2
             inputs:
               script: |
+                if [[ -z `/bin/bash -c "kubectl get secret -n producer-consumer --context=gke_wise-trainer-244916_us-central1_multicloud-gke-cluster|grep kafka-with-kraft-cluster-ca-cert|cut -d ' ' -f1"` ]]
+                then
+                  kubectl create secret generic kafka-with-kraft-cluster-ca-cert --namespace=producer-consumer --from-literal=ca.crt="$(kubectl get secret kafka-with-kraft-cluster-ca-cert -n kafka --context=gke_wise-trainer-244916_us-central1_multicloud-gke-cluster -o jsonpath='{.data.ca\.crt}' | base64 --decode)" --context=gke_wise-trainer-244916_us-central1_multicloud-gke-cluster
+                fi
+                if [[ -z `/bin/bash -c "kubectl get secret -n producer-consumer --context=gke_wise-trainer-244916_us-central1_multicloud-gke-cluster|grep keda-user|cut -d ' ' -f1"` ]]
+                then
+                  kubectl create secret generic keda-user --namespace=producer-consumer --from-literal=user.crt="$(kubectl get secret keda-user -n kafka --context=gke_wise-trainer-244916_us-central1_multicloud-gke-cluster -o jsonpath='{.data.user\.crt}' | base64 --decode)" --from-literal=user.key="$(kubectl get secret keda-user -n kafka --context=gke_wise-trainer-244916_us-central1_multicloud-gke-cluster -o jsonpath='{.data.user\.key}' | base64 --decode)" --context=gke_wise-trainer-244916_us-central1_multicloud-gke-cluster
+                fi 
                 yes|argocd login argocd.singhritesh85.com --username admin --password $(ARGOCD_PASSWORD) --grpc-web --kube-context=gke_wise-trainer-244916_us-central1_multicloud-gke-cluster
                 argocd repo add https://github.com/singhritesh85/kafka-cluster-with-kraft-using-strimzi-operator.git --username $(GITHUB_USERNAME) --password $(GITHUB_PASSWORD) --kube-context=gke_wise-trainer-244916_us-central1_multicloud-gke-cluster
                 argocd app create keda-scaled-object --project default --repo https://github.com/singhritesh85/kafka-cluster-with-kraft-using-strimzi-operator.git --path ./trigger-authentication-scaled-object --dest-namespace producer-consumer --sync-option CreateNamespace=true --dest-server https://kubernetes.default.svc --sync-policy automated --kube-context=gke_wise-trainer-244916_us-central1_multicloud-gke-cluster --upsert
