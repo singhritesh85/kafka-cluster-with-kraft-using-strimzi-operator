@@ -96,3 +96,26 @@ metadata:
 spec:
   authentication:
     type: tls
+  authorization:
+    type: simple
+    acls:
+      # 1. Allow KEDA to read and describe the target topic
+      - resource:
+          type: topic
+          name: kafka-demo-topic
+          patternType: literal
+        operation: Read
+        host: "*"
+      - resource:
+          type: topic
+          name: kafka-demo-topic
+          patternType: literal
+        operation: Describe
+        host: "*"
+      # 2. Allow KEDA to read the consumer group to calculate lag
+      - resource:
+          type: group
+          name: kafka-demo-group
+          patternType: literal
+        operation: Read
+        host: "*"
