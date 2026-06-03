@@ -42,4 +42,5 @@ spec:
         lagThreshold: "1" ###"100"
       authenticationRef:
         name: kafka-trigger-auth-cluster
+        kind: ClusterTriggerAuthentication
 ...
