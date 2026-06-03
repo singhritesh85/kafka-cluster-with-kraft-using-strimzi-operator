@@ -104,18 +104,21 @@ spec:
           type: topic
           name: kafka-demo-topic
           patternType: literal
-        operations: Read
+        operations:
+        - Read
         host: "*"
       - resource:
           type: topic
           name: kafka-demo-topic
           patternType: literal
-        operations: Describe
+        operations: 
+        - Describe
         host: "*"
       # 2. Allow KEDA to read the consumer group to calculate lag
       - resource:
           type: group
           name: kafka-demo-group
           patternType: literal
-        operations: Read
+        operations: 
+        - Read
         host: "*"
